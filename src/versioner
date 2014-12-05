@@ -33,7 +33,7 @@ while getopts "v:m:h" name; do
 done
 
 if [[ ( -z $message ) || ( -z $version ) ]]; then
-    echo "A tag message and version must be provided."
+	echo "A tag message and version must be provided."
 else
 	context=`git config --local --get versioner.context`
 	file=`git config --local --get versioner.file`
@@ -46,27 +46,27 @@ else
 		echo "Please run \`git config --local --add versioner.branch **branch to merge**\`"
 	else
 		echo -e "\nChecking out dev."
-	    git checkout $branch
-	    
-	    echo -e "\nEditing $file."
-	    mv $file $file.temp
-	    sed "s/$context.*/$context$version/g" < $file.temp > $file
-	    rm $file.temp
-	    
-	    echo -e "\nCommitting updated version.\n"
-	    git add $file
-	    git commit -m "Version bump to $version."
-	    
-	    git checkout master
-	    
-	    git merge --no-ff dev
-	    
-	    echo -e "\nTagging version $version."
-	    git tag -a v$version -m "$message"
-	    
-	    git checkout $branch
-	    
-	    echo -e "\nSUCCESS"
-	    echo "To push changes run 'push --all' and 'push --tags'."
+		git checkout $branch
+		
+		echo -e "\nEditing $file."
+		mv $file $file.temp
+		sed "s/$context.*/$context$version/g" < $file.temp > $file
+		rm $file.temp
+		
+		echo -e "\nCommitting updated version.\n"
+		git add $file
+		git commit -m "Version bump to $version."
+		
+		git checkout master
+		
+		git merge --no-ff dev
+		
+		echo -e "\nTagging version $version."
+		git tag -a v$version -m "$message"
+		
+		git checkout $branch
+		
+		echo -e "\nSUCCESS"
+		echo "To push changes run 'push --all' and 'push --tags'."
 	fi
 fi
