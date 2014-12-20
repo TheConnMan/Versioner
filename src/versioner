@@ -11,10 +11,11 @@ usage() {
 }
 
 showhelp() {
-	echo "Usage: versioner: [-v version] [-t tag] [-Mmbh]"
+	echo "Usage: versioner: [-v version] [-t tag] [-s setup] [-Mmbh]"
 	echo "Versioner: Git versioning and tagging without the hassle"
 	echo "  -v: version number"
 	echo "  -t: tag message"
+	echo "  -s: setup type (grails)"
 	echo "  -M: Major version bump"
 	echo "  -m: Minor version bump"
 	echo "  -b: Build version bump"
@@ -22,14 +23,36 @@ showhelp() {
 	exit
 }
 
+setup() {
+	if [[ $1 -eq "grails" ]]; then
+		context="app.version="
+		file="application.properties"
+		branch=dev
+	else
+		echo "Setup type not recognized."
+		exit
+	fi
+	git config --local --unset-all versioner.context
+	git config --local --add versioner.context "\"$context\""
+	echo "Context set to '$context'"
+	git config --local --unset-all versioner.file
+	git config --local --add versioner.file "$file"
+	echo "File set to '$file'"
+	git config --local --unset-all versioner.branch
+	git config --local --add versioner.branch "$branch"
+	echo "Branch set to '$branch'"
+	exit
+}
+
 # Initialize variables and define defaults
 
 # Get arguments
 
-while getopts "Mmbv:t:h" name; do
+while getopts "Mmbv:t:s:h" name; do
 	case $name in
 		v)  version=$OPTARG;;
 		t)  tag=$OPTARG;;
+		s)  setup $OPTARG;;
 		M)  type=0;;
 		m)  type=1;;
 		b)  type=2;;
@@ -47,6 +70,7 @@ else
 	branch=`git config --local --get versioner.branch`
 	if [[ -z $context ]]; then
 		echo "Please run \`git config --local --add versioner.context **version context**\`"
+		echo "Make sure to wrap the context in quotes, especially if it contains spaces"
 	elif [[ -z $file ]]; then
 		echo "Please run \`git config --local --add versioner.file **file with version**\`"
 	elif [[ -z $branch ]]; then
@@ -55,10 +79,11 @@ else
 		if [[ -z $version ]]; then
 		
 			# Define context regex
-			reg='s/'$context'\(.*\)/\1/p'
+			fixed=`echo "$context" | sed -e 's/^"//'  -e 's/"$//'`
+			reg='s/'$fixed'\(.*\)/\1/p'
 			
 			# Get the current version
-			ver=`cat $file | grep -h "$context" | sed -n "$reg"`
+			ver=`cat $file | grep -h "$fixed" | sed -n "$reg"`
 			
 			# Split and increment the correct version level
 			IFS=. VER=($ver)
@@ -83,12 +108,12 @@ else
 		git checkout $branch
 		
 		echo -e "\nEditing $file."
-		mv $file $file.temp
-		sed "s/$context.*/$context$version/g" < $file.temp > $file
-		rm $file.temp
+		mv "$file" "$file.temp"
+		sed "s/$context.*/$context$version/g" < "$file.temp" > "$file"
+		rm "$file.temp"
 		
 		echo -e "\nCommitting updated version.\n"
-		git add $file
+		git add "$file"
 		git commit -m "Version bump to $version."
 		
 		git checkout master
@@ -96,7 +121,7 @@ else
 		git merge --no-ff dev
 		
 		echo -e "\nTagging version $version."
-		git tag -a v$version -m "$tag"
+		git tag -a v"$version" -m "$tag"
 		
 		git checkout $branch
 		
