@@ -5,13 +5,13 @@
 # Version 2.0.0
 
 usage() {
-	echo "Usage: versioner [-v version] [-t message] [-Mmbh]"
+	echo "Usage: versioner [-v version] [-t tag message] [-s setup] [-Mmbh]"
 	echo "       versioner -h for help."
 	exit
 }
 
 showhelp() {
-	echo "Usage: versioner: [-v version] [-t tag] [-s setup] [-Mmbh]"
+	echo "Usage: versioner: [-v version] [-t tag message] [-s setup] [-Mmbh]"
 	echo "Versioner: Git versioning and tagging without the hassle"
 	echo "  -v: version number"
 	echo "  -t: tag message"
