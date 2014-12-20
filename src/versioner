@@ -2,7 +2,7 @@
 # Versioner
 # Git versioning and tagging without the hassle
 # brian@theconnman.com
-# Version 1.0.0
+# Version 2.0.0
 
 usage() {
 	echo "Usage: versioner [-v version] [-t message] [-Mmbh]"
