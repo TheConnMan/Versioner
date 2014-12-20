@@ -26,6 +26,10 @@ To install download the [latest version](https://github.com/TheConnMan/Versioner
 
 Before using **versioner** you'll need to set a few configs within your local git repository.
 
+### Default Setup
+
+There is an option to set up and default config if the project is a **Grails** project. Run `versioner -s grails` to use this default setup.
+
 #### Branch
 
 The development branch is the branch where the version will be incremented and committed. This branch will then be merged into master and switched back to after completion. To set this branch run the following:
@@ -71,10 +75,18 @@ Replace **[context]** with the version number context.
 
 To increment the version of an app run **versioner** in the root directory of your git repository with the following options:
 
-Usage: `versioner [-v version] [-m message]`
+Usage: `versioner [-v version] [-t tag message] [-s setup] [-Mmbh]`
 - -v: version number
-- -m: tag message
+- -t: tag message
+- -s: setup type (grails)
+- -M: Major version bump
+- -m: Minor version bump
+- -b: Build version bump
 - -h: help
+
+### Versions
+
+**Versioner** allows you to specify a sepcific version using the `-v` option, or specify and **Major** (`-M`), **Minor** (`-m`), or **Build** (`-b`) level bump. Any of these three flags will auto-increment that build level and set and lower levels to zero (e.g. **1.1.1** -> **2.0.0**).
 
 ## Support
 
