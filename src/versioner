@@ -5,13 +5,13 @@
 # Version 2.0.1
 
 usage() {
-	echo "Usage: versioner [-v version] [-t tag message] [-s setup] [-Mmbh]"
+	echo "Usage: versioner [-v version] [-t tag message] [-s setup type] [-Mmsbw]"
 	echo "       versioner -h for help."
 	exit
 }
 
 showhelp() {
-	echo "Usage: versioner: [-v version] [-t tag message] [-s setup] [-Mmbh]"
+	echo "Usage: versioner: [-v version] [-t tag message] [-s setup type] [-Mmbwh]"
 	echo "Versioner: Git versioning and tagging without the hassle"
 	echo "  -v: version number"
 	echo "  -t: tag message"
@@ -19,11 +19,27 @@ showhelp() {
 	echo "  -M: Major version bump"
 	echo "  -m: Minor version bump"
 	echo "  -b: Build version bump"
+	echo "  -w: Setup wizard"
 	echo "  -h: this help message"
 	exit
 }
 
-setup() {
+setupWizard() {
+	context=`git config --local --get versioner.context`
+	file=`git config --local --get versioner.file`
+	branch=`git config --local --get versioner.branch`
+	echo -e "Versioner Setup Wizard\n"
+	echo -e "Press enter to submit a value, enter no value to preserve the current setting\n"
+	IFS= read -r -p "Enter the full version context: [$context] " context
+	IFS= read -r -p "Enter the file path of the file containing the version number relative to the git repository root: [$file] " file
+	IFS= read -r -p "Enter the development branch name: [$branch] " branch
+	echo ""
+	setup "$context" "$file" "$branch"
+	echo "Setup Complete"
+	exit
+}
+
+defaultSetup() {
 	if [[ $1 -eq "grails" ]]; then
 		context="app.version="
 		file="application.properties"
@@ -32,30 +48,41 @@ setup() {
 		echo "Setup type not recognized."
 		exit
 	fi
-	git config --local --unset-all versioner.context
-	git config --local --add versioner.context "\"$context\""
-	echo "Context set to '$context'"
-	git config --local --unset-all versioner.file
-	git config --local --add versioner.file "$file"
-	echo "File set to '$file'"
-	git config --local --unset-all versioner.branch
-	git config --local --add versioner.branch "$branch"
-	echo "Branch set to '$branch'"
+	setup "$context" "$file" "$branch"
 	exit
+}
+
+setup() {
+	if [ -n "$1" ]; then
+		git config --local --unset-all versioner.context
+		git config --local --add versioner.context "\"$1\""
+		echo "Context set to '$1'"
+	fi
+	if [ -n "$2" ]; then
+		git config --local --unset-all versioner.file
+		git config --local --add versioner.file "$2"
+		echo "File set to '$2'"
+	fi
+	if [ -n "$3" ]; then
+		git config --local --unset-all versioner.branch
+		git config --local --add versioner.branch "$3"
+		echo "Branch set to '$3'"
+	fi
 }
 
 # Initialize variables and define defaults
 
 # Get arguments
 
-while getopts "Mmbv:t:s:h" name; do
+while getopts "Mmbwv:t:s:h" name; do
 	case $name in
 		v)  version=$OPTARG;;
 		t)  tag=$OPTARG;;
-		s)  setup $OPTARG;;
+		s)  defaultSetup $OPTARG;;
 		M)  type=0;;
 		m)  type=1;;
 		b)  type=2;;
+		w)  setupWizard $0;;
 		h)  showhelp $0;;
 		[?])  usage $0;;
 	esac
@@ -76,10 +103,10 @@ else
 	elif [[ -z $branch ]]; then
 		echo "Please run \`git config --local --add versioner.branch **branch to merge**\`"
 	else
+		fixed=`echo "$context" | sed -e 's/^"//'  -e 's/"$//'`
 		if [[ -z $version ]]; then
 		
 			# Define context regex
-			fixed=`echo "$context" | sed -e 's/^"//'  -e 's/"$//'`
 			reg='s/'$fixed'\(.*\)/\1/p'
 			
 			# Get the current version
@@ -104,12 +131,13 @@ else
 			# Rejoin the version array
 			IFS=.; version="${VER[*]}"
 		fi
+		echo "$version"
 		echo -e "\nChecking out dev."
 		git checkout $branch
 		
 		echo -e "\nEditing $file."
 		mv "$file" "$file.temp"
-		sed "s/$context.*/$context$version/g" < "$file.temp" > "$file"
+		sed "s/$fixed.*/$fixed$version/g" < "$file.temp" > "$file"
 		rm "$file.temp"
 		
 		echo -e "\nCommitting updated version.\n"
