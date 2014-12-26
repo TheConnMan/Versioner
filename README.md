@@ -24,33 +24,25 @@ To install download the [latest version](https://github.com/TheConnMan/Versioner
 
 ### Local Config Setup
 
-Before using **versioner** you'll need to set a few configs within your local git repository.
+Before using **versioner** you'll need to set a few configs within your local git repository. You can use the **Setup Wizard** or **Default Setup** below to get started. Additional info about the setup items is also below.
 
-### Default Setup
+#### Setup Wizard
+
+There is a setup wizard to help with initial setup. Run `versioner -w` to use this wizard.
+
+#### Default Setup
 
 There is an option to set up and default config if the project is a **Grails** project. Run `versioner -s grails` to use this default setup.
 
-#### Branch
+##### Branch
 
-The development branch is the branch where the version will be incremented and committed. This branch will then be merged into master and switched back to after completion. To set this branch run the following:
+The development branch is the branch where the version will be incremented and committed. This branch will then be merged into master and switched back to after completion.
 
-```
-git config --local --add versioner.branch [branch]
-```
+##### File
 
-Replace **[branch]** with the name of your development branch.
+You'll also need to set the file which contains your application version number. This file path must be a relative path from the root of the project to the file.
 
-#### File
-
-You'll also need to set the file which contains your application version number. This file path must be a relative path from the root of the project to the file. Set this by running the following:
-
-```
-git config --local --add versioner.file [file]
-```
-
-Replace **[file]** with the relative path of your file.
-
-#### Context
+##### Context
 
 To find and replace the version number within the file above a little context is needed. Set the **context** to the contents of the line containing the version number in the file above. For example, the following file would use the context [**app.version=**].
 
@@ -63,25 +55,18 @@ app.servlet.version=3.0
 app.version=1.1.2
 ```
 
-Set the context by running the following:
-
-```
-git config --local --add versioner.context [context]
-```
-
-Replace **[context]** with the version number context.
-
 ## Use
 
 To increment the version of an app run **versioner** in the root directory of your git repository with the following options:
 
-Usage: `versioner [-v version] [-t tag message] [-s setup] [-Mmbh]`
+Usage: `versioner [-v version] [-t tag message] [-s setup] [-Mmbwh]`
 - -v: version number
 - -t: tag message
 - -s: setup type (grails)
 - -M: Major version bump
 - -m: Minor version bump
 - -b: Build version bump
+- -w: Setup wizard
 - -h: help
 
 ### Versions
