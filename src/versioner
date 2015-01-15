@@ -131,7 +131,6 @@ else
 			# Rejoin the version array
 			IFS=.; version="${VER[*]}"
 		fi
-		echo "$version"
 		echo -e "\nChecking out dev."
 		git checkout $branch
 		
