@@ -71,7 +71,7 @@ Usage: `versioner [-v version] [-t tag message] [-s setup] [-Mmbwh]`
 
 ### Versions
 
-**Versioner** allows you to specify a sepcific version using the `-v` option, or specify and **Major** (`-M`), **Minor** (`-m`), or **Build** (`-b`) level bump. Any of these three flags will auto-increment that build level and set and lower levels to zero (e.g. **1.1.1** -> **2.0.0**).
+**Versioner** allows you to specify a specific version using the `-v` option, or specify and **Major** (`-M`), **Minor** (`-m`), or **Build** (`-b`) level bump. Any of these three flags will auto-increment that build level and set and lower levels to zero (e.g. **1.1.1** -> **2.0.0**).
 
 ## Support
 
