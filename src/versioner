@@ -41,7 +41,7 @@ setupWizard() {
 
 defaultSetup() {
 	if [[ $1 -eq "grails" ]]; then
-		context="app.version="
+		context="app.version=\(.*\)"
 		file="application.properties"
 		branch=dev
 	else
@@ -104,14 +104,12 @@ else
 		echo "Please run \`git config --local --add versioner.branch **branch to merge**\`"
 	else
 		fixed=`echo "$context" | sed -e 's/^"//'  -e 's/"$//'`
+		
+		# Get the current version
+		ver=`cat $file | sed -n "s/.*$fixed.*/\1/p"`
+		
 		if [[ -z $version ]]; then
 		
-			# Define context regex
-			reg='s/'$fixed'\(.*\)/\1/p'
-			
-			# Get the current version
-			ver=`cat $file | grep -h "$fixed" | sed -n "$reg"`
-			
 			# Split and increment the correct version level
 			IFS=. VER=($ver)
 			VER[$type]=$((${VER[$type]}+1))
@@ -136,7 +134,7 @@ else
 		
 		echo -e "\nEditing $file."
 		mv "$file" "$file.temp"
-		sed "s/$fixed.*/$fixed$version/g" < "$file.temp" > "$file"
+		sed "s/$ver/$version/" < "$file.temp" > "$file"
 		rm "$file.temp"
 		
 		echo -e "\nCommitting updated version.\n"
