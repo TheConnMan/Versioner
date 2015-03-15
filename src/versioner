@@ -30,7 +30,7 @@ setupWizard() {
 	branch=`git config --local --get versioner.branch`
 	echo -e "Versioner Setup Wizard\n"
 	echo -e "Press enter to submit a value, enter no value to preserve the current setting\n"
-	IFS= read -r -p "Enter the full version context: [$context] " context
+	IFS= read -r -p "Enter the full version context matcher (use "\(.*\)" to match the version): [$context] " context
 	IFS= read -r -p "Enter the file path of the file containing the version number relative to the git repository root: [$file] " file
 	IFS= read -r -p "Enter the development branch name: [$branch] " branch
 	echo ""

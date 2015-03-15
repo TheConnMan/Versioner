@@ -44,7 +44,7 @@ You'll also need to set the file which contains your application version number.
 
 ##### Context
 
-To find and replace the version number within the file above a little context is needed. Set the **context** to the contents of the line containing the version number in the file above. For example, the following file would use the context [**app.version=**].
+To find and replace the version number within the file above a little context is needed. Set the **context** to the contents of the line containing the version number in the file above (use `\(.*\)` to match the version). For example, the following file would use the context `app.version=\(.*\)`.
 
 ```
 #Grails Metadata file
@@ -53,6 +53,15 @@ app.grails.version=2.3.0
 app.name=myapp
 app.servlet.version=3.0
 app.version=1.1.2
+```
+
+The following would use `def version = "\(.*\)"`.
+
+```
+// the plugin version
+def version = "1.0.0"
+// the version or versions of Grails the plugin is designed for
+def grailsVersion = "2.0 > *"
 ```
 
 ## Use
