@@ -2,7 +2,6 @@
 # Versioner
 # Git versioning and tagging without the hassle
 # brian@theconnman.com
-# Version 2.2.0
 
 usage() {
 	echo "Usage: versioner [-v version] [-t tag message] [-s setup type] [-Mmsbw]"
@@ -12,7 +11,7 @@ usage() {
 
 showhelp() {
 	echo "Usage: versioner: [-v version] [-t tag message] [-s setup type] [-Mmbwh]"
-	echo "Versioner: Git versioning and tagging without the hassle"
+	echo "Versioner 2.2.1: Git versioning and tagging without the hassle"
 	echo "  -v: version number"
 	echo "  -t: tag message"
 	echo "  -s: setup type (grails)"
